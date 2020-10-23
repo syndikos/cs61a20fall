@@ -173,46 +173,51 @@ class ThrowerAnt(Ant):
 
         This method returns None if there is no such Bee (or none in range).
         """
-        # BEGIN Problem 3 and 4
-        # def move_place(place, n):
-        #     counter = 0
-        #     while counter <= n:
-        #         if place.entrance == beehive:
-        #             return beehive
-        #         else:
-        
-        
-
-
-                
-
-
-        def nearest_bee_by_place(place,  beehive):
-            def get_place(place, range_num):
-            if isinstance(float, range_num):
-                return beehive
-            
-            else:
-                counter = 0
-                while counter < range_num:
-                    place = place.entrance
-                    counter += 1
+        min_range = self.min_range
+        max_range = self.max_range
+        def nearest_bee_by_place(place, min_range, max_range, beehive):
+            def start(place, min_range, beehive):
+                if place == beehive or place is None:
+                    return None
+                elif min_range == 0:
                     return place
-            place_start = get_place(place, self.min_range)
-            place_end = get_place(place, self.max_range)
-            if place_start.bees != [] or place_start == place_end:
-                
-                return rANTdom_else_none(place_start.bees)
+                elif place.entrance == beehive:
+                    return None
+                else:
+                    return start(place.entrance, (min_range - 1), beehive)
+
+            def end(place, max_range, beehive):
+                if isinstance(max_range, float):
+                    return beehive
+                elif place.entrance == beehive or max_range == 0:
+                    return place
+                else:
+                    return end(place.entrance, (max_range - 1), beehive)
+
+            start = start(place, min_range, beehive)
+            end = end(place, max_range, beehive)
+
+            if start is None:
+                return None
+
+            elif start.bees != [] or start == end:
+                    
+                return rANTdom_else_none(start.bees)
             else:
-              
-                return nearest_bee_by_place(place_start.entrance , place_end)
-        return nearest_bee_by_place(self.place, beehive)
+                
+                return nearest_bee_by_place(place.entrance, min_range, max_range, beehive)
+        return nearest_bee_by_place(self.place, min_range, max_range, beehive)
 
 
             
    
      
-        # END Problem 3 and 4curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        # END Problem 3 and 4
+
+    def throw_at(self, target):
+        """Throw a leaf at the TARGET Bee, reducing its armor."""
+        if target is not None:
+            target.reduce_armor(self.damage)
     def action(self, gamestate):
         """Throw a leaf at the nearest Bee in range."""
         self.throw_at(self.nearest_bee(gamestate.beehive))
