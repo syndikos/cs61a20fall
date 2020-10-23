@@ -175,37 +175,67 @@ class ThrowerAnt(Ant):
         """
         min_range = self.min_range
         max_range = self.max_range
+        # place = self.place
+
+        # def out_of_range(min-range, max_range)
         def nearest_bee_by_place(place, min_range, max_range, beehive):
+            
             def start(place, min_range, beehive):
                 if place == beehive or place is None:
                     return None
                 elif min_range == 0:
-                    return place
-                elif place.entrance == beehive:
-                    return None
+                     return place
+                # elif place.entrance == beehive:
+                #     return None
                 else:
                     return start(place.entrance, (min_range - 1), beehive)
 
-            def end(place, max_range, beehive):
-                if isinstance(max_range, float):
-                    return beehive
-                elif place.entrance == beehive or max_range == 0:
-                    return place
-                else:
-                    return end(place.entrance, (max_range - 1), beehive)
+            # def end(place, max_range, beehive):
+            #     if isinstance(max_range, float):
+            #         return beehive
+            #     elif place.entrance == beehive or max_range == 0:
+            #         return place
+            #     else:
+            #         return end(place.entrance, (max_range - 1), beehive)
 
             start = start(place, min_range, beehive)
-            end = end(place, max_range, beehive)
+            # end = end(place, max_range, beehive)
 
-            if start is None:
+            def inf_max_range(start, beehive):
+                if start == beehive:
+                    return None
+                elif start.bees != []:
+                    return rANTdom_else_none(start.bees)
+                else:
+                    inf_max_range(start.entrance, beehive)
+
+            def not_inf_max_range(start, max_range, beehive):
+                if start == beehive:
+                    return None
+                elif max_range == 0 :
+                    return rANTdom_else_none(start.bees) 
+                elif max_range > 0 and start.bees != []:
+                    return rANTdom_else_none(start.bees)
+                else:
+                    return not_inf_max_range(start.entrance, (max_range - 1), beehive)
+            if not start:
                 return None
+            elif isinstance(max_range, float):
+                return inf_max_range(start, beehive)
+            return not_inf_max_range(start, max_range, beehive)
 
-            elif start.bees != [] or start == end:
-                    
-                return rANTdom_else_none(start.bees)
-            else:
                 
-                return nearest_bee_by_place(place.entrance, min_range, max_range, beehive)
+                
+
+                
+
+                
+                
+            # # elif start
+            # # elif end == beehive:
+            # #     return nearest_bee_by_place(start.entrance, min_range, max_range, end.exit)
+            # else:   
+            #     return nearest_bee_by_place(start.entrance, min_range, max_range, beehive)
         return nearest_bee_by_place(self.place, min_range, max_range, beehive)
 
 
@@ -237,6 +267,7 @@ class ShortThrower(ThrowerAnt):
 
     name = 'Short'
     food_cost = 2
+    max_range = 3
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
     implemented = True   # Change to True to view in the GUI
@@ -249,6 +280,7 @@ class LongThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
+    min_range = 5
     implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
